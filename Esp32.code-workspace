@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"name": "BMSCoreESP32",
+			"path": "."
+		}
+	],
+	"settings": {}
+}
