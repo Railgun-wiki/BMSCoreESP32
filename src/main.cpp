@@ -36,16 +36,19 @@ void setup() {
 
     // --- SPI (shared HSPI for LCD + DAC) ---
     spiHSPI.begin(PIN_LCD_SCLK, -1, PIN_LCD_MOSI, PIN_LCD_CS);
+    // TODO: Remove global beginTransaction — each driver (ST7789, DAC8562) should manage its own SPI transactions
     spiHSPI.beginTransaction(SPISettings(40000000, MSBFIRST, SPI_MODE0));
 
     // --- BSP Init ---
     if (!ina226.init(BMS_SHUNT_uOhm, BMS_MAX_CURRENT_mA)) {
         Serial.println("[BMS] INA226 init FAILED");
+        // TODO: Set error state flag, blink LED to indicate sensor failure
     } else {
         Serial.println("[BMS] INA226 OK");
     }
 
     dac8562.init();
+    // TODO: Check dac8562.init() return value and handle failure
     Serial.println("[BMS] DAC8562 OK");
 
     lcd.init();
@@ -61,10 +64,28 @@ void setup() {
     bms_ui_init();
 
     // --- WiFi + MQTT (blocking portal before task creation) ---
+    // TODO: Move WiFi to non-blocking task, display progress on LCD before blocking
     mqttBridgeInit();
 
     // --- Sensor task init ---
     taskSensorInit();
+
+    // TODO: Initialize OneButton on PIN_FLASH_BTN for WiFiManager config reset (long press >3s)
+    // TODO: Initialize WS2812 LED on PIN_RGB_LED for status indication
+    // TODO: Configure ESP task watchdog (esp_task_wdt_config)
+    // TODO: Initialize PSRAM and log available size (ESP.getPsramSize())
+
+    // --- LVGL Input Device (placeholder — wire to GPIO buttons in Phase 2) ---
+    {
+        static lv_indev_t* s_keypad = lv_indev_create();
+        lv_indev_set_type(s_keypad, LV_INDEV_TYPE_KEYPAD);
+        lv_indev_set_read_cb(s_keypad, [](lv_indev_t* drv, lv_indev_data_t* data) {
+            (void)drv;
+            // TODO: Read actual GPIO buttons (PIN_FLASH_BTN, etc.)
+            data->key = 0;
+            data->state = LV_INDEV_STATE_RELEASED;
+        });
+    }
 
     // --- FreeRTOS Tasks ---
     xTaskCreatePinnedToCore(taskLvgl,   "lvgl",   8192, nullptr, 5, nullptr, 1);

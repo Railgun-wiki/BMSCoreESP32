@@ -33,7 +33,8 @@ void Dac8562::setVoltage(Channel channel, float voltage, float vRef) {
 
 bool Dac8562::setInternalRef(bool enable) {
     transmit(Command::InternalRefConfig, Channel::DAC_A, enable ? 0x0001 : 0x0000);
-    return true;
+    // TODO: Verify SPI transfer succeeded (readback or return value from transmit)
+    return true;  // FIXME: always returns true regardless of SPI result
 }
 
 bool Dac8562::setGain(uint8_t gainA, uint8_t gainB) {
@@ -42,7 +43,8 @@ bool Dac8562::setGain(uint8_t gainA, uint8_t gainB) {
     if (gainB == 1) data |= 0x0002;
 
     transmit(Command::WriteInputReg, static_cast<Channel>(2), data);
-    return true;
+    // TODO: Verify SPI transfer succeeded
+    return true;  // FIXME: always returns true regardless of SPI result
 }
 
 void Dac8562::reset() {

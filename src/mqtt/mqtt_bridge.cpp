@@ -15,11 +15,13 @@ static const unsigned long TELEMETRY_INTERVAL_MS = 5000;
 static const char* MQTT_TOPIC_TELEMETRY = "bms/telemetry";
 
 static void mqttCallback(char* topic, unsigned char* payload, unsigned int length) {
-    // Reserved for command handling
+    // TODO: Parse MQTT command messages on "bms/command" topic
+    // TODO: Support commands: charge_on/off, discharge_on/off, set_voltage, set_current, reboot
 }
 
 void mqttBridgeInit(void) {
     LittleFS.begin(true);
+    // TODO: Check LittleFS.begin() return value
 
     WiFiManager wm;
     wm.setConnectTimeout(30);
@@ -33,16 +35,21 @@ void mqttBridgeInit(void) {
 
     Serial.printf("[MQTT] WiFi connected: %s\n", WiFi.localIP().toString().c_str());
 
-    // Default MQTT config (could be loaded from LittleFS JSON)
+    // TODO: Load MQTT config from LittleFS JSON instead of hardcoded values
+    // TODO: Add MQTT username/password authentication
+    // TODO: Configure Last Will and Testament (LWT) for availability
     s_mqtt.setServer("broker.emqx.io", 1883);
     s_mqtt.setCallback(mqttCallback);
 }
 
 void mqttBridgeLoop(void) {
     if (WiFi.status() != WL_CONNECTED) return;
+    // TODO: Implement WiFi reconnection logic with backoff
 
     if (!s_mqtt.connected()) {
         if (s_mqtt.connect("ESP32S3_BMS")) {
+            // TODO: Add retry backoff (currently retries every 10ms)
+            // TODO: Subscribe to "bms/command" topic after reconnect
             Serial.println("[MQTT] Connected");
         }
     }
@@ -58,6 +65,7 @@ void mqttBridgeLoop(void) {
         JsonDocument doc;
         doc["v_mv"] = state->voltage_mV;
         doc["i_ma"] = state->current_mA;
+        doc["p_mw"] = state->power_mW;
         doc["soc_x10"] = state->soc_x10;
         doc["temp_x10"] = state->temperature_x10;
         doc["charge_active"] = state->charge_active;

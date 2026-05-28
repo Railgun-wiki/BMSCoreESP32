@@ -89,12 +89,14 @@ int32_t Ina226::getPower_mW() {
 
 uint16_t Ina226::getManufacturerId() {
     uint16_t val = 0;
+    // TODO: Check readReg return value, distinguish I2C failure from value 0
     readReg(REG_MANUF_ID, val);
     return val;
 }
 
 uint16_t Ina226::getDieId() {
     uint16_t val = 0;
+    // TODO: Check readReg return value, distinguish I2C failure from value 0
     readReg(REG_DIE_ID, val);
     return val;
 }
