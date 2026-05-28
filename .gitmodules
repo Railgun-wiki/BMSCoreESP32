@@ -1,0 +1,10 @@
+[submodule "middleware/lvgl"]
+	path = middleware/lvgl
+	url = https://github.com/lvgl/lvgl.git
+	branch = release/v9.5
+[submodule "middleware/FreeRTOS"]
+	path = middleware/FreeRTOS
+	url = https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+[submodule "lv_bms_view"]
+	path = src/ui
+	url = https://github.com/Railgun-wiki/lv_bms_view.git
