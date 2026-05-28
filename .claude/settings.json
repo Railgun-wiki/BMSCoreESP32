@@ -1,0 +1,50 @@
+{
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "filesystem": {
+      "writeAllowOnly": [
+        ".",
+        "/tmp/claude"
+      ]
+    }
+  },
+  "permissions": {
+    "allow": [
+      "Bash(~/.platformio/penv/bin/pio run*)",
+      "Bash(~/.platformio/penv/bin/pio upload*)",
+      "Bash(~/.platformio/penv/bin/pio device monitor*)",
+      "Bash(~/.platformio/penv/bin/pio lib *)",
+      "Bash(~/.platformio/penv/bin/pio pkg *)",
+      "Bash(python3 *)",
+      "Bash(python *)",
+      "Bash(pip3 *)",
+      "Bash(git *)",
+      "Bash(ls *)",
+      "Bash(find *)",
+      "Bash(cp *)",
+      "Bash(mkdir *)",
+      "Bash(tree *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
+      "Bash(diff *)",
+      "Bash(grep *)",
+      "Bash(rg *)",
+      "Bash(cat *)",
+      "Bash(echo *)",
+      "Bash(pwd *)",
+      "Bash(cd *)",
+      "Bash(./scripts/*)",
+      "Bash(bash scripts/*)",
+      "Bash(screen *)",
+      "Bash(minicom *)",
+      "Bash(stty *)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(sudo *)",
+      "Bash(chmod 777 *)"
+    ]
+  }
+}
