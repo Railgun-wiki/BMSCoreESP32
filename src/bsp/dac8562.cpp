@@ -1,4 +1,5 @@
 #include "dac8562.hpp"
+#include <Arduino.h>
 #include <algorithm>
 
 Dac8562::Dac8562(SPIClass* spi, int syncPin)
@@ -24,7 +25,9 @@ void Dac8562::writeValue(Channel channel, uint16_t value) {
 
 void Dac8562::setVoltage(Channel channel, float voltage, float vRef) {
     float scaled = (voltage / vRef) * 65535.0f;
-    uint16_t value = static_cast<uint16_t>(std::clamp(scaled, 0.0f, 65535.0f));
+    if (scaled < 0.0f) scaled = 0.0f;
+    if (scaled > 65535.0f) scaled = 65535.0f;
+    uint16_t value = static_cast<uint16_t>(scaled);
     writeValue(channel, value);
 }
 

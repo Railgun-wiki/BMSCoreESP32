@@ -14,7 +14,7 @@ static unsigned long s_lastTelemetryMs = 0;
 static const unsigned long TELEMETRY_INTERVAL_MS = 5000;
 static const char* MQTT_TOPIC_TELEMETRY = "bms/telemetry";
 
-static void mqttCallback(char* topic, uint8_t payload, unsigned int length) {
+static void mqttCallback(char* topic, unsigned char* payload, unsigned int length) {
     // Reserved for command handling
 }
 

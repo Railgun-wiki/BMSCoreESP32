@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <lvgl.h>
 
-void taskLvgl(void* param) {
+extern "C" void taskLvgl(void* param) {
     (void)param;
     for (;;) {
         lv_timer_handler();

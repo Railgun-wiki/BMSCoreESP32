@@ -1,4 +1,5 @@
 #include "st7789.hpp"
+#include <Arduino.h>
 
 St7789::St7789(SPIClass* spi, int csPin, int dcPin, int rstPin, int blkPin)
     : m_spi(spi), m_csPin(csPin), m_dcPin(dcPin), m_rstPin(rstPin), m_blkPin(blkPin),

@@ -5,11 +5,11 @@
 
 static SemaphoreHandle_t s_stateMutex = nullptr;
 
-void taskSensorInit(void) {
+extern "C" void taskSensorInit(void) {
     s_stateMutex = xSemaphoreCreateMutex();
 }
 
-void taskSensor(void* param) {
+extern "C" void taskSensor(void* param) {
     (void)param;
 
     for (;;) {
