@@ -68,26 +68,36 @@ FreeRTOS:  FreeRTOS/FreeRTOS-Kernel → main
 
 **核心原则**: BSP、App、UI 三层独立,通过接口连接。
 
-```
-BSP 层 (src/bsp/)           App 层 (src/app/)           UI 层 (src/ui/)
-C++ 类, 本项目维护           业务逻辑, 本项目维护         LVGL 视图, submodule
-┌──────────────────┐        ┌──────────────────┐        ┌──────────────────┐
-│ Ina226            │        │ app.cpp          │        │ bms_ui_view.c    │
-│  TwoWire*         │        │  传感器读取       │        │  纯 LVGL C       │
-│  getBusVoltage()  │        │  DAC 控制         │        │  零硬件依赖      │
-├──────────────────┤        │  充放电逻辑       │        ├──────────────────┤
-│ St7789            │        ├──────────────────┤        │ bms_ui_ctrl.c    │
-│  SPIClass*        │        │ bms_hw.cpp       │        │  输入处理         │
-│  flush_cb()       │◄─注入──│  bms_hw_bind()   │        │  零硬件依赖      │
-├──────────────────┤        │  硬件抽象桥接     │        ├──────────────────┤
-│ Dac8562           │        └──────────────────┘        │ bms_state.h      │
-│  SPIClass*        │                 │                  │  共享状态结构体   │
-│  writeValue()     │                 ▼                  └──────────────────┘
-└──────────────────┘        ┌──────────────────┐               ▲
-                            │ main.cpp + tasks │               │ 读取
-                            │  创建驱动实例     │───────────────┘
-                            │  注入 BSP 指针    │
-                            └──────────────────┘
+```mermaid
+graph TB
+    subgraph BSP["BSP 层 (src/bsp/) — C++ 类, 本项目维护"]
+        INA["Ina226<br/>TwoWire*<br/>getBusVoltage()"]
+        ST["St7789<br/>SPIClass*<br/>flush_cb()"]
+        DAC["Dac8562<br/>SPIClass*<br/>writeValue()"]
+    end
+
+    subgraph App["App 层 (src/app/) — 业务逻辑"]
+        APP["app.cpp<br/>传感器读取, DAC 控制, 充放电逻辑"]
+        HW["bms_hw.cpp<br/>bms_hw_bind()<br/>硬件抽象桥接"]
+    end
+
+    subgraph UI["UI 层 (src/ui/) — LVGL, submodule"]
+        VIEW["bms_ui_view.c<br/>纯 LVGL C, 零硬件依赖"]
+        CTRL["bms_ui_ctrl.c<br/>输入处理, 零硬件依赖"]
+        STATE["bms_state.h<br/>共享状态结构体"]
+    end
+
+    subgraph Main["main.cpp + tasks"]
+        INIT["创建驱动实例<br/>注入 BSP 指针"]
+    end
+
+    INIT -->|"bms_hw_bind()"| HW
+    HW -->|"指针注入"| INA
+    HW -->|"指针注入"| ST
+    HW -->|"指针注入"| DAC
+    VIEW -->|"读取"| STATE
+    CTRL -->|"读取"| STATE
+    APP -->|"写入"| STATE
 ```
 
 **规则**:

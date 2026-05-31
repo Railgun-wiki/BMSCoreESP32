@@ -26,18 +26,26 @@ PlatformIO 未加入 PATH,使用完整路径:
 
 三层架构,参照 BMS-Core 的分离方式:
 
-```
-┌─────────────────────────────────────────────┐
-│  src/tasks/         FreeRTOS 任务编排        │
-├─────────────────────────────────────────────┤
-│  src/app/           业务逻辑 (本项目维护)     │
-│  src/ui/            LVGL UI (submodule)      │
-│  src/mqtt/          MQTT 遥测                │
-│  src/soc/           SOC 估算                 │
-├─────────────────────────────────────────────┤
-│  src/bsp/           硬件驱动 (本项目维护)     │
-│  middleware/         LVGL + FreeRTOS (submodule) │
-└─────────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph Tasks["src/tasks/ — FreeRTOS 任务编排"]
+        T["taskLvgl + taskBms + taskMqtt"]
+    end
+
+    subgraph Logic["src/app/ + src/ui/ + src/mqtt/ + src/soc/"]
+        APP["业务逻辑 (本项目维护)"]
+        UI["LVGL UI (submodule)"]
+        MQTT["MQTT 遥测"]
+        SOC["SOC 估算"]
+    end
+
+    subgraph HW["src/bsp/ + middleware/"]
+        BSP["硬件驱动 (本项目维护)"]
+        MW["LVGL + FreeRTOS (submodule)"]
+    end
+
+    Tasks --> Logic
+    Logic --> HW
 ```
 
 - **App (业务逻辑)**: CCCV/CC 控制状态机、DAC 输出、GPIO 启停 — 不依赖 UI (Roadmap)

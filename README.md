@@ -25,18 +25,28 @@ ESP32-S3 BMS (Battery Management System) integrated firmware — combining INA22
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────┐
-│  src/tasks/           FreeRTOS task orchestration│
-├─────────────────────────────────────────────────┤
-│  src/app/             Business logic (this repo) │
-│  src/ui/              LVGL UI (submodule)         │
-│  src/mqtt/            MQTT telemetry              │
-│  src/soc/             SOC estimation              │
-├─────────────────────────────────────────────────┤
-│  src/bsp/             Hardware drivers (this repo)│
-│  middleware/           LVGL + FreeRTOS (submodule) │
-└─────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph Tasks["src/tasks/ — FreeRTOS Task Orchestration"]
+        T1["taskLvgl (Core 1, P5)"]
+        T2["taskBms (Core 0, P4)"]
+        T3["taskMqtt (Core 0, P2)"]
+    end
+
+    subgraph Logic["src/app/ + src/ui/ + src/mqtt/ + src/soc/"]
+        APP["Business logic (this repo)"]
+        UI["LVGL UI (submodule)"]
+        MQTT["MQTT telemetry"]
+        SOC["SOC estimation"]
+    end
+
+    subgraph HW["src/bsp/ + middleware/"]
+        BSP["Hardware drivers (this repo)"]
+        MW["LVGL + FreeRTOS (submodule)"]
+    end
+
+    Tasks --> Logic
+    Logic --> HW
 ```
 
 Three-layer decoupling: BSP drivers are injected into App via pointers, App and UI communicate through `bms_state_t` shared state. UI has zero hardware dependencies — reusable on PC simulator.
