@@ -20,7 +20,7 @@ ESP32-S3 BMS (Battery Management System) integrated firmware — combining INA22
 | Flash / PSRAM | 16MB / 8MB OPI |
 | Display | 1.14" ST7789 IPS, 135x240, RGB565, SPI |
 | Sensor | INA226, I2C, 2mOhm shunt, 15A max |
-| DAC | DAC8562, dual 16-bit, SPI (shared bus with LCD) |
+| DAC | DAC8562, dual 16-bit, SPI3 (GP-SPI3/VSPI, dedicated bus) |
 | WiFi | ESP32-S3 built-in 2.4GHz 802.11 b/g/n |
 
 ## Architecture
@@ -57,7 +57,7 @@ Three-layer decoupling: BSP drivers are injected into App via pointers, App and 
 | SDA | 21 |
 | SCL | 22 |
 
-### SPI (ST7789 + DAC8562, shared HSPI)
+### SPI — ST7789 LCD (GP-SPI2 / FSPI)
 | Signal | GPIO |
 |--------|------|
 | MOSI | 11 |
@@ -66,6 +66,12 @@ Three-layer decoupling: BSP drivers are injected into App via pointers, App and 
 | LCD_DC | 46 |
 | LCD_RST | 9 |
 | LCD_BLK | 8 |
+
+### SPI — DAC8562 (GP-SPI3 / VSPI)
+| Signal | GPIO |
+|--------|------|
+| DAC_MOSI | 40 |
+| DAC_SCLK | 41 |
 | DAC_SYNC | 14 |
 
 ### Other

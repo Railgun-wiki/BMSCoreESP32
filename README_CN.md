@@ -20,7 +20,7 @@ ESP32-S3 BMS 集成固件 — 在一块 Freenove ESP32-S3 WROOM N16R8 开发板�
 | Flash / PSRAM | 16MB / 8MB OPI |
 | 显示屏 | 1.14" ST7789 IPS, 135x240, RGB565, SPI |
 | 传感器 | INA226, I2C, 2mOhm 分流器, 最大 15A |
-| DAC | DAC8562, 双通道 16-bit, SPI (与 LCD 共享总线) |
+| DAC | DAC8562, 双通道 16-bit, SPI3 (GP-SPI3/VSPI, 独立总线) |
 | WiFi | ESP32-S3 内置 2.4GHz 802.11 b/g/n |
 
 ## 架构
@@ -57,7 +57,7 @@ ESP32-S3 BMS 集成固件 — 在一块 Freenove ESP32-S3 WROOM N16R8 开发板�
 | SDA | 21 |
 | SCL | 22 |
 
-### SPI (ST7789 + DAC8562, 共享 HSPI)
+### SPI — ST7789 LCD (GP-SPI2 / FSPI)
 | 信号 | GPIO |
 |------|------|
 | MOSI | 11 |
@@ -66,6 +66,12 @@ ESP32-S3 BMS 集成固件 — 在一块 Freenove ESP32-S3 WROOM N16R8 开发板�
 | LCD_DC | 46 |
 | LCD_RST | 9 |
 | LCD_BLK | 8 |
+
+### SPI — DAC8562 (GP-SPI3 / VSPI)
+| 信号 | GPIO |
+|------|------|
+| DAC_MOSI | 40 |
+| DAC_SCLK | 41 |
 | DAC_SYNC | 14 |
 
 ### 其他

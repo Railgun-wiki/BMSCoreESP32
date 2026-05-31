@@ -19,7 +19,8 @@ PlatformIO 未加入 PATH,使用完整路径:
 - **Board def**: `boards/freenove_esp32_s3_wroom_n16r8.json` (自定义,PlatformIO 仅有 N8R8)
 - **Display**: 1.14" ST7789 IPS, 135x240, RGB565, SPI
 - **Sensor**: INA226, I2C, 2mOhm shunt, 15A max
-- **DAC**: DAC8562, dual 16-bit, SPI (shared bus with LCD)
+- **DAC**: DAC8562, dual 16-bit, SPI3 (GP-SPI3/VSPI, dedicated bus, GPIO 40/41/14)
+- **LCD SPI**: ST7789 on SPI2 (GP-SPI2/FSPI, GPIO 11/12/10)
 
 ## Architecture
 
@@ -39,7 +40,8 @@ PlatformIO 未加入 PATH,使用完整路径:
 └─────────────────────────────────────────────┘
 ```
 
-- **App (业务逻辑)**: 传感器读取、DAC 控制、充放电逻辑 — 不依赖 UI
+- **App (业务逻辑)**: CCCV/CC 控制状态机、DAC 输出、GPIO 启停 — 不依赖 UI (Roadmap)
+- **bms_hw (硬件桥接)**: 双 mutex 共享状态、BSP 指针注入、传感器读取调度 — 已实现
 - **UI (lv_bms_view)**: LVGL 视图/控制器 — 不依赖业务逻辑
 - **连接**: 通过 `bms_state_t` 共享状态 + `bms_hw` 硬件抽象接口
 
