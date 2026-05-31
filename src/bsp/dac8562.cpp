@@ -57,7 +57,9 @@ void Dac8562::transmit(Command cmd, Channel addr, uint16_t data) {
     buffer[1] = (data >> 8) & 0xFF;
     buffer[2] = data & 0xFF;
 
+    m_spi->beginTransaction(SPISettings(20000000, MSBFIRST, SPI_MODE0));
     digitalWrite(m_syncPin, LOW);
     m_spi->transfer(buffer, 3);
     digitalWrite(m_syncPin, HIGH);
+    m_spi->endTransaction();
 }

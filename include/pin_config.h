@@ -5,7 +5,7 @@
 #define PIN_I2C_SCL         22
 #define INA226_ADDRESS_7BIT 0x40
 
-/* SPI - ST7789 LCD + DAC8562 (shared HSPI/SPI2, separate CS) */
+/* SPI - ST7789 LCD on GP-SPI2 (FSPI) */
 #define PIN_LCD_MOSI        11
 #define PIN_LCD_SCLK        12
 #define PIN_LCD_CS          10
@@ -13,6 +13,8 @@
 #define PIN_LCD_RST         9
 #define PIN_LCD_BLK         8
 #define PIN_DAC_SYNC        14   /* DAC8562 chip select */
+#define PIN_DAC_MOSI        40   /* DAC8562 data  (GP-SPI3) */
+#define PIN_DAC_SCLK        41   /* DAC8562 clock (GP-SPI3) */
 
 /* UART (reserved) */
 #define PIN_UART_RX         18

@@ -19,12 +19,13 @@
 
 // --- Peripheral instances ---
 static TwoWire   wireI2C(0);
-static SPIClass  spiHSPI(HSPI);
+static SPIClass  spiFSPI(FSPI);  // GP-SPI2: LCD 专用
+static SPIClass  spiDAC(VSPI);   // GP-SPI3: DAC 专用
 
 // --- BSP driver instances ---
 static Ina226    ina226(&wireI2C, INA226_ADDRESS_7BIT);
-static Dac8562   dac8562(&spiHSPI, PIN_DAC_SYNC);
-static St7789    lcd(&spiHSPI, PIN_LCD_CS, PIN_LCD_DC, PIN_LCD_RST, PIN_LCD_BLK);
+static Dac8562   dac8562(&spiDAC, PIN_DAC_SYNC);
+static St7789    lcd(&spiFSPI, PIN_LCD_CS, PIN_LCD_DC, PIN_LCD_RST, PIN_LCD_BLK);
 
 void setup() {
     Serial.begin(115200);
@@ -34,10 +35,9 @@ void setup() {
     // --- I2C ---
     wireI2C.begin(PIN_I2C_SDA, PIN_I2C_SCL, 400000);
 
-    // --- SPI (shared HSPI for LCD + DAC) ---
-    spiHSPI.begin(PIN_LCD_SCLK, -1, PIN_LCD_MOSI, PIN_LCD_CS);
-    // TODO: Remove global beginTransaction — each driver (ST7789, DAC8562) should manage its own SPI transactions
-    spiHSPI.beginTransaction(SPISettings(40000000, MSBFIRST, SPI_MODE0));
+    // --- SPI: LCD on GP-SPI2 (FSPI), DAC on GP-SPI3 (VSPI) ---
+    spiFSPI.begin(PIN_LCD_SCLK, -1, PIN_LCD_MOSI, PIN_LCD_CS);
+    spiDAC.begin(PIN_DAC_SCLK, -1, PIN_DAC_MOSI, PIN_DAC_SYNC);
 
     // --- BSP Init ---
     if (!ina226.init(BMS_SHUNT_uOhm, BMS_MAX_CURRENT_mA)) {

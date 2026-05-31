@@ -136,20 +136,20 @@ void St7789::fillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t c
 
     uint8_t colorBytes[2] = {static_cast<uint8_t>(color >> 8), static_cast<uint8_t>(color & 0xFF)};
 
+    m_spi->beginTransaction(SPISettings(40000000, MSBFIRST, SPI_MODE0));
     digitalWrite(m_dcPin, HIGH);
-    // Use SPI block transfer instead of per-pixel loop
     uint32_t totalPixels = (uint32_t)w * h;
-    // Send in chunks to avoid large buffer allocation
     uint8_t buf[128];
     for (int i = 0; i < 128; i += 2) {
         buf[i] = colorBytes[0];
         buf[i + 1] = colorBytes[1];
     }
     while (totalPixels > 0) {
-        uint32_t chunk = (totalPixels > 64) ? 64 : totalPixels; // 64 pixels = 128 bytes
+        uint32_t chunk = (totalPixels > 64) ? 64 : totalPixels;
         m_spi->transfer(buf, chunk * 2);
         totalPixels -= chunk;
     }
+    m_spi->endTransaction();
 }
 
 void St7789::drawImage(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t* data) {
@@ -159,8 +159,10 @@ void St7789::drawImage(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uin
 
     setAddressWindow(x, y, x + w - 1, y + h - 1);
 
+    m_spi->beginTransaction(SPISettings(40000000, MSBFIRST, SPI_MODE0));
     digitalWrite(m_dcPin, HIGH);
     m_spi->transfer((uint8_t*)data, w * h * 2);
+    m_spi->endTransaction();
 }
 
 void St7789::flush_cb(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const uint16_t* color_p) {
@@ -169,21 +171,29 @@ void St7789::flush_cb(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const uint
 
     setAddressWindow(x1, y1, x2, y2);
 
+    m_spi->beginTransaction(SPISettings(40000000, MSBFIRST, SPI_MODE0));
     digitalWrite(m_dcPin, HIGH);
     m_spi->transfer((uint8_t*)color_p, w * h * 2);
+    m_spi->endTransaction();
 }
 
 void St7789::writeCmd(uint8_t cmd) {
+    m_spi->beginTransaction(SPISettings(40000000, MSBFIRST, SPI_MODE0));
     digitalWrite(m_dcPin, LOW);
     m_spi->transfer(cmd);
+    m_spi->endTransaction();
 }
 
 void St7789::writeData(uint8_t data) {
+    m_spi->beginTransaction(SPISettings(40000000, MSBFIRST, SPI_MODE0));
     digitalWrite(m_dcPin, HIGH);
     m_spi->transfer(data);
+    m_spi->endTransaction();
 }
 
 void St7789::writeData(const uint8_t* data, uint32_t len) {
+    m_spi->beginTransaction(SPISettings(40000000, MSBFIRST, SPI_MODE0));
     digitalWrite(m_dcPin, HIGH);
     m_spi->transfer((uint8_t*)data, len);
+    m_spi->endTransaction();
 }
