@@ -63,6 +63,7 @@ Three-layer decoupling: BSP drivers are injected into App via pointers, App and 
 
 Pin visualization spec: [Docs/PINOUT_VISUALIZATION.md](Docs/PINOUT_VISUALIZATION.md)  
 Visualization metadata: [Docs/pinout_metadata.json](Docs/pinout_metadata.json)
+Generate board-style interactive page: `python3 scripts/generate_pinout_board.py`
 
 ### I2C (INA226)
 | Signal | GPIO |

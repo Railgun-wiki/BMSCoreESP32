@@ -63,6 +63,7 @@ graph TB
 
 引脚可视化规范: [Docs/PINOUT_VISUALIZATION.md](Docs/PINOUT_VISUALIZATION.md)  
 可视化元数据: [Docs/pinout_metadata.json](Docs/pinout_metadata.json)
+生成板卡式交互页: `python3 scripts/generate_pinout_board.py`
 
 ### I2C (INA226)
 | 信号 | GPIO |

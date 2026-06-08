@@ -6,6 +6,147 @@
     "default_unlisted_status": "free",
     "notes": "Unlisted GPIOs render as free unless a later metadata revision marks them as reserved or assigned."
   },
+  "page_config": {
+    "title": "ESP32-S3 Pinout Viewer",
+    "subtitle": "BMSCoreESP32 board-style interactive pinout",
+    "output_path": "Docs/generated/pinout-board.html",
+    "gpio_range": {
+      "start": 0,
+      "end": 48
+    },
+    "layout": {
+      "side_split_gpio": 24,
+      "left_title": "Left Pin Rail",
+      "right_title": "Right Pin Rail"
+    },
+    "board_style": {
+      "theme": "poster-board",
+      "board_label": "Freenove ESP32-S3",
+      "board_subtitle": "WROOM N16R8"
+    },
+    "view_modes": [
+      {
+        "id": "overview",
+        "label": "全量视图",
+        "description": "显示项目占用、受限和自由 GPIO。"
+      },
+      {
+        "id": "project-used",
+        "label": "项目占用",
+        "description": "突出当前项目实际使用或预留的引脚。"
+      },
+      {
+        "id": "spi-highlight",
+        "label": "SPI 高亮",
+        "description": "只强调 LCD FSPI 和 DAC SPI 相关引脚。"
+      },
+      {
+        "id": "i2c-highlight",
+        "label": "I2C 高亮",
+        "description": "强调 INA226 所在的 I2C0 引脚。"
+      },
+      {
+        "id": "restricted",
+        "label": "受限引脚",
+        "description": "强调保留、占用和 boot 敏感引脚。"
+      },
+      {
+        "id": "available-gpio",
+        "label": "可用 GPIO",
+        "description": "强调未分配的普通 GPIO。"
+      }
+    ],
+    "legend_groups": [
+      {
+        "id": "lcd",
+        "label": "LCD / FSPI",
+        "color_token": "lcd"
+      },
+      {
+        "id": "dac",
+        "label": "DAC / HSPI",
+        "color_token": "dac"
+      },
+      {
+        "id": "i2c",
+        "label": "I2C0",
+        "color_token": "i2c"
+      },
+      {
+        "id": "uart",
+        "label": "UART 预留",
+        "color_token": "uart"
+      },
+      {
+        "id": "system",
+        "label": "系统 / 按键 / LED",
+        "color_token": "system"
+      },
+      {
+        "id": "free",
+        "label": "自由 GPIO",
+        "color_token": "free"
+      },
+      {
+        "id": "reserved",
+        "label": "受限 / 占用",
+        "color_token": "reserved"
+      }
+    ],
+    "board_specials": [
+      {
+        "id": "power-3v3",
+        "label": "3.3V",
+        "kind": "power",
+        "side": "left",
+        "order": 90,
+        "voltage_type": "3V3",
+        "notes": "Development board 3.3V rail."
+      },
+      {
+        "id": "power-gnd-left",
+        "label": "GND",
+        "kind": "ground",
+        "side": "left",
+        "order": 91,
+        "voltage_type": "GND",
+        "notes": "Ground reference."
+      },
+      {
+        "id": "power-5v",
+        "label": "+5V",
+        "kind": "power",
+        "side": "right",
+        "order": 90,
+        "voltage_type": "5V",
+        "notes": "USB 5V rail."
+      },
+      {
+        "id": "power-gnd-right",
+        "label": "GND",
+        "kind": "ground",
+        "side": "right",
+        "order": 91,
+        "voltage_type": "GND",
+        "notes": "Ground reference."
+      },
+      {
+        "id": "board-boot",
+        "label": "BOOT",
+        "kind": "system",
+        "side": "right",
+        "order": 92,
+        "voltage_type": "logic",
+        "notes": "Board boot button and strap context."
+      }
+    ],
+    "notes": [
+      "GPIO0 is boot-sensitive and should not be driven carelessly during reset.",
+      "GPIO26-32 are reserved by current project documentation.",
+      "GPIO35-37 are occupied by OPI PSRAM and must not be reused.",
+      "Project view emphasizes both actively used and intentionally reserved pins."
+    ]
+  },
   "render_defaults": {
     "view_mode": "overview",
     "free_color": "free",
@@ -16,179 +157,298 @@
     {
       "gpio_number": 0,
       "signal_name": "PIN_FLASH_BTN",
+      "short_label": "FLASH_BTN",
+      "long_label": "WiFiManager reset / boot strap",
       "peripheral_group": "SYSTEM",
+      "render_group": "system",
       "status": "used",
       "direction": "input",
+      "side": "left",
+      "order": 0,
       "notes": "WiFiManager config reset button; boot strap and input-sensitive.",
       "source_macro": "PIN_FLASH_BTN",
       "view_color": "system",
-      "display_badges": ["boot", "input-sensitive"]
+      "display_badges": [
+        "boot",
+        "input-sensitive"
+      ],
+      "badge": "boot",
+      "is_project_used": true,
+      "anchor_class": "pin-flash-btn"
     },
     {
       "gpio_number": 8,
       "signal_name": "PIN_LCD_BLK",
+      "short_label": "LCD_BLK",
+      "long_label": "ST7789 backlight",
       "peripheral_group": "LCD",
+      "render_group": "lcd",
       "status": "used",
       "direction": "output",
+      "side": "left",
+      "order": 8,
       "notes": "ST7789 backlight control.",
       "source_macro": "PIN_LCD_BLK",
-      "view_color": "lcd"
+      "view_color": "lcd",
+      "is_project_used": true,
+      "anchor_class": "pin-lcd-blk"
     },
     {
       "gpio_number": 9,
       "signal_name": "PIN_LCD_RST",
+      "short_label": "LCD_RST",
+      "long_label": "ST7789 reset",
       "peripheral_group": "LCD",
+      "render_group": "lcd",
       "status": "used",
       "direction": "output",
+      "side": "left",
+      "order": 9,
       "notes": "ST7789 reset.",
       "source_macro": "PIN_LCD_RST",
-      "view_color": "lcd"
+      "view_color": "lcd",
+      "is_project_used": true,
+      "anchor_class": "pin-lcd-rst"
     },
     {
       "gpio_number": 10,
       "signal_name": "PIN_LCD_CS",
+      "short_label": "LCD_CS",
+      "long_label": "ST7789 chip select",
       "peripheral_group": "LCD",
+      "render_group": "lcd",
       "status": "used",
       "direction": "output",
+      "side": "left",
+      "order": 10,
       "notes": "ST7789 chip select on FSPI bus.",
       "source_macro": "PIN_LCD_CS",
-      "view_color": "lcd"
+      "view_color": "lcd",
+      "is_project_used": true,
+      "anchor_class": "pin-lcd-cs"
     },
     {
       "gpio_number": 11,
       "signal_name": "PIN_LCD_MOSI",
+      "short_label": "LCD_MOSI",
+      "long_label": "ST7789 data",
       "peripheral_group": "LCD",
+      "render_group": "lcd",
       "status": "used",
       "direction": "output",
+      "side": "left",
+      "order": 11,
       "notes": "ST7789 data on GP-SPI2/FSPI.",
       "source_macro": "PIN_LCD_MOSI",
-      "view_color": "lcd"
+      "view_color": "lcd",
+      "is_project_used": true,
+      "anchor_class": "pin-lcd-mosi"
     },
     {
       "gpio_number": 12,
       "signal_name": "PIN_LCD_SCLK",
+      "short_label": "LCD_SCLK",
+      "long_label": "ST7789 clock",
       "peripheral_group": "LCD",
+      "render_group": "lcd",
       "status": "used",
       "direction": "output",
+      "side": "left",
+      "order": 12,
       "notes": "ST7789 clock on GP-SPI2/FSPI.",
       "source_macro": "PIN_LCD_SCLK",
-      "view_color": "lcd"
+      "view_color": "lcd",
+      "is_project_used": true,
+      "anchor_class": "pin-lcd-sclk"
     },
     {
       "gpio_number": 14,
       "signal_name": "PIN_DAC_SYNC",
+      "short_label": "DAC_SYNC",
+      "long_label": "DAC8562 sync",
       "peripheral_group": "DAC",
+      "render_group": "dac",
       "status": "used",
       "direction": "output",
+      "side": "left",
+      "order": 14,
       "notes": "DAC8562 sync/chip select on dedicated SPI bus.",
       "source_macro": "PIN_DAC_SYNC",
-      "view_color": "dac"
+      "view_color": "dac",
+      "is_project_used": true,
+      "anchor_class": "pin-dac-sync"
     },
     {
       "gpio_number": 17,
       "signal_name": "PIN_UART_TX",
+      "short_label": "UART_TX",
+      "long_label": "Reserved UART TX",
       "peripheral_group": "UART",
+      "render_group": "uart",
       "status": "reserved",
       "direction": "output",
+      "side": "left",
+      "order": 17,
       "notes": "UART TX reserved for future host communication.",
       "source_macro": "PIN_UART_TX",
-      "view_color": "uart"
+      "view_color": "uart",
+      "is_project_used": true,
+      "anchor_class": "pin-uart-tx"
     },
     {
       "gpio_number": 18,
       "signal_name": "PIN_UART_RX",
+      "short_label": "UART_RX",
+      "long_label": "Reserved UART RX",
       "peripheral_group": "UART",
+      "render_group": "uart",
       "status": "reserved",
       "direction": "input",
+      "side": "left",
+      "order": 18,
       "notes": "UART RX reserved for future host communication.",
       "source_macro": "PIN_UART_RX",
-      "view_color": "uart"
+      "view_color": "uart",
+      "is_project_used": true,
+      "anchor_class": "pin-uart-rx"
     },
     {
       "gpio_number": 21,
       "signal_name": "PIN_I2C_SDA",
+      "short_label": "I2C_SDA",
+      "long_label": "INA226 SDA",
       "peripheral_group": "I2C0",
+      "render_group": "i2c",
       "status": "used",
       "direction": "bidirectional",
+      "side": "left",
+      "order": 21,
       "notes": "INA226 SDA on I2C0 at 400kHz.",
       "source_macro": "PIN_I2C_SDA",
-      "view_color": "i2c"
+      "view_color": "i2c",
+      "is_project_used": true,
+      "anchor_class": "pin-i2c-sda"
     },
     {
       "gpio_number": 22,
       "signal_name": "PIN_I2C_SCL",
+      "short_label": "I2C_SCL",
+      "long_label": "INA226 SCL",
       "peripheral_group": "I2C0",
+      "render_group": "i2c",
       "status": "used",
       "direction": "output",
+      "side": "left",
+      "order": 22,
       "notes": "INA226 SCL on I2C0 at 400kHz.",
       "source_macro": "PIN_I2C_SCL",
-      "view_color": "i2c"
+      "view_color": "i2c",
+      "is_project_used": true,
+      "anchor_class": "pin-i2c-scl"
     },
     {
       "gpio_number": 40,
       "signal_name": "PIN_DAC_MOSI",
+      "short_label": "DAC_MOSI",
+      "long_label": "DAC8562 data",
       "peripheral_group": "DAC",
+      "render_group": "dac",
       "status": "used",
       "direction": "output",
+      "side": "right",
+      "order": 40,
       "notes": "DAC8562 data on the second general-purpose SPI host.",
       "source_macro": "PIN_DAC_MOSI",
-      "view_color": "dac"
+      "view_color": "dac",
+      "is_project_used": true,
+      "anchor_class": "pin-dac-mosi"
     },
     {
       "gpio_number": 41,
       "signal_name": "PIN_DAC_SCLK",
+      "short_label": "DAC_SCLK",
+      "long_label": "DAC8562 clock",
       "peripheral_group": "DAC",
+      "render_group": "dac",
       "status": "used",
       "direction": "output",
+      "side": "right",
+      "order": 41,
       "notes": "DAC8562 clock on the second general-purpose SPI host.",
       "source_macro": "PIN_DAC_SCLK",
-      "view_color": "dac"
+      "view_color": "dac",
+      "is_project_used": true,
+      "anchor_class": "pin-dac-sclk"
     },
     {
       "gpio_number": 46,
       "signal_name": "PIN_LCD_DC",
+      "short_label": "LCD_DC",
+      "long_label": "ST7789 D/C",
       "peripheral_group": "LCD",
+      "render_group": "lcd",
       "status": "used",
       "direction": "output",
+      "side": "right",
+      "order": 46,
       "notes": "ST7789 data/command select.",
       "source_macro": "PIN_LCD_DC",
-      "view_color": "lcd"
+      "view_color": "lcd",
+      "is_project_used": true,
+      "anchor_class": "pin-lcd-dc"
     },
     {
       "gpio_number": 48,
       "signal_name": "PIN_RGB_LED",
+      "short_label": "RGB_LED",
+      "long_label": "WS2812 status LED",
       "peripheral_group": "LED",
+      "render_group": "system",
       "status": "reserved",
       "direction": "output",
+      "side": "right",
+      "order": 48,
       "notes": "WS2812 status LED reserved for later initialization.",
       "source_macro": "PIN_RGB_LED",
-      "view_color": "system"
+      "view_color": "system",
+      "is_project_used": true,
+      "anchor_class": "pin-rgb-led"
     }
   ],
   "restricted_ranges": [
     {
+      "id": "reserved-flash-psram",
+      "label": "GPIO26-32",
+      "short_label": "26-32",
+      "long_label": "Flash/PSRAM reserved",
       "start_gpio": 26,
       "end_gpio": 32,
       "status": "reserved",
       "peripheral_group": "SYSTEM",
+      "render_group": "reserved",
+      "side": "right",
+      "order": 80,
       "notes": "Reserved for Flash/PSRAM per current project documentation.",
-      "view_color": "reserved"
+      "view_color": "reserved",
+      "badge": "reserved",
+      "anchor_class": "restricted-flash-psram"
     },
     {
+      "id": "reserved-opi-psram",
+      "label": "GPIO35-37",
+      "short_label": "35-37",
+      "long_label": "OPI PSRAM occupied",
       "start_gpio": 35,
       "end_gpio": 37,
       "status": "reserved",
       "peripheral_group": "SYSTEM",
+      "render_group": "reserved",
+      "side": "right",
+      "order": 81,
       "notes": "Occupied by OPI PSRAM and unavailable to user firmware.",
-      "view_color": "reserved"
+      "view_color": "reserved",
+      "badge": "psram",
+      "anchor_class": "restricted-opi-psram"
     }
-  ],
-  "view_modes": [
-    "overview",
-    "spi-highlight",
-    "i2c-highlight",
-    "restricted",
-    "available-gpio",
-    "conflict-check"
   ]
 }
