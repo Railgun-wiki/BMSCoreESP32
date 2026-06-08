@@ -1,0 +1,194 @@
+{
+  "board": "freenove_esp32_s3_wroom_n16r8",
+  "mcu": "ESP32-S3",
+  "source_of_truth": {
+    "pin_header": "include/pin_config.h",
+    "default_unlisted_status": "free",
+    "notes": "Unlisted GPIOs render as free unless a later metadata revision marks them as reserved or assigned."
+  },
+  "render_defaults": {
+    "view_mode": "overview",
+    "free_color": "free",
+    "reserved_color": "reserved",
+    "warning_badge_color": "warning"
+  },
+  "pins": [
+    {
+      "gpio_number": 0,
+      "signal_name": "PIN_FLASH_BTN",
+      "peripheral_group": "SYSTEM",
+      "status": "used",
+      "direction": "input",
+      "notes": "WiFiManager config reset button; boot strap and input-sensitive.",
+      "source_macro": "PIN_FLASH_BTN",
+      "view_color": "system",
+      "display_badges": ["boot", "input-sensitive"]
+    },
+    {
+      "gpio_number": 8,
+      "signal_name": "PIN_LCD_BLK",
+      "peripheral_group": "LCD",
+      "status": "used",
+      "direction": "output",
+      "notes": "ST7789 backlight control.",
+      "source_macro": "PIN_LCD_BLK",
+      "view_color": "lcd"
+    },
+    {
+      "gpio_number": 9,
+      "signal_name": "PIN_LCD_RST",
+      "peripheral_group": "LCD",
+      "status": "used",
+      "direction": "output",
+      "notes": "ST7789 reset.",
+      "source_macro": "PIN_LCD_RST",
+      "view_color": "lcd"
+    },
+    {
+      "gpio_number": 10,
+      "signal_name": "PIN_LCD_CS",
+      "peripheral_group": "LCD",
+      "status": "used",
+      "direction": "output",
+      "notes": "ST7789 chip select on FSPI bus.",
+      "source_macro": "PIN_LCD_CS",
+      "view_color": "lcd"
+    },
+    {
+      "gpio_number": 11,
+      "signal_name": "PIN_LCD_MOSI",
+      "peripheral_group": "LCD",
+      "status": "used",
+      "direction": "output",
+      "notes": "ST7789 data on GP-SPI2/FSPI.",
+      "source_macro": "PIN_LCD_MOSI",
+      "view_color": "lcd"
+    },
+    {
+      "gpio_number": 12,
+      "signal_name": "PIN_LCD_SCLK",
+      "peripheral_group": "LCD",
+      "status": "used",
+      "direction": "output",
+      "notes": "ST7789 clock on GP-SPI2/FSPI.",
+      "source_macro": "PIN_LCD_SCLK",
+      "view_color": "lcd"
+    },
+    {
+      "gpio_number": 14,
+      "signal_name": "PIN_DAC_SYNC",
+      "peripheral_group": "DAC",
+      "status": "used",
+      "direction": "output",
+      "notes": "DAC8562 sync/chip select on dedicated SPI bus.",
+      "source_macro": "PIN_DAC_SYNC",
+      "view_color": "dac"
+    },
+    {
+      "gpio_number": 17,
+      "signal_name": "PIN_UART_TX",
+      "peripheral_group": "UART",
+      "status": "reserved",
+      "direction": "output",
+      "notes": "UART TX reserved for future host communication.",
+      "source_macro": "PIN_UART_TX",
+      "view_color": "uart"
+    },
+    {
+      "gpio_number": 18,
+      "signal_name": "PIN_UART_RX",
+      "peripheral_group": "UART",
+      "status": "reserved",
+      "direction": "input",
+      "notes": "UART RX reserved for future host communication.",
+      "source_macro": "PIN_UART_RX",
+      "view_color": "uart"
+    },
+    {
+      "gpio_number": 21,
+      "signal_name": "PIN_I2C_SDA",
+      "peripheral_group": "I2C0",
+      "status": "used",
+      "direction": "bidirectional",
+      "notes": "INA226 SDA on I2C0 at 400kHz.",
+      "source_macro": "PIN_I2C_SDA",
+      "view_color": "i2c"
+    },
+    {
+      "gpio_number": 22,
+      "signal_name": "PIN_I2C_SCL",
+      "peripheral_group": "I2C0",
+      "status": "used",
+      "direction": "output",
+      "notes": "INA226 SCL on I2C0 at 400kHz.",
+      "source_macro": "PIN_I2C_SCL",
+      "view_color": "i2c"
+    },
+    {
+      "gpio_number": 40,
+      "signal_name": "PIN_DAC_MOSI",
+      "peripheral_group": "DAC",
+      "status": "used",
+      "direction": "output",
+      "notes": "DAC8562 data on the second general-purpose SPI host.",
+      "source_macro": "PIN_DAC_MOSI",
+      "view_color": "dac"
+    },
+    {
+      "gpio_number": 41,
+      "signal_name": "PIN_DAC_SCLK",
+      "peripheral_group": "DAC",
+      "status": "used",
+      "direction": "output",
+      "notes": "DAC8562 clock on the second general-purpose SPI host.",
+      "source_macro": "PIN_DAC_SCLK",
+      "view_color": "dac"
+    },
+    {
+      "gpio_number": 46,
+      "signal_name": "PIN_LCD_DC",
+      "peripheral_group": "LCD",
+      "status": "used",
+      "direction": "output",
+      "notes": "ST7789 data/command select.",
+      "source_macro": "PIN_LCD_DC",
+      "view_color": "lcd"
+    },
+    {
+      "gpio_number": 48,
+      "signal_name": "PIN_RGB_LED",
+      "peripheral_group": "LED",
+      "status": "reserved",
+      "direction": "output",
+      "notes": "WS2812 status LED reserved for later initialization.",
+      "source_macro": "PIN_RGB_LED",
+      "view_color": "system"
+    }
+  ],
+  "restricted_ranges": [
+    {
+      "start_gpio": 26,
+      "end_gpio": 32,
+      "status": "reserved",
+      "peripheral_group": "SYSTEM",
+      "notes": "Reserved for Flash/PSRAM per current project documentation.",
+      "view_color": "reserved"
+    },
+    {
+      "start_gpio": 35,
+      "end_gpio": 37,
+      "status": "reserved",
+      "peripheral_group": "SYSTEM",
+      "notes": "Occupied by OPI PSRAM and unavailable to user firmware.",
+      "view_color": "reserved"
+    }
+  ],
+  "view_modes": [
+    "overview",
+    "spi-highlight",
+    "i2c-highlight",
+    "restricted",
+    "available-gpio",
+    "conflict-check"
+  ]
+}

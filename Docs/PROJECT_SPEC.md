@@ -188,6 +188,7 @@ PlatformIO 仓库仅有 N8R8 板定义。N16R8 需要自定义:
 
 ## 4. 引脚分配
 
+引脚可视化规范见 `Docs/PINOUT_VISUALIZATION.md`, 元数据真源见 `Docs/pinout_metadata.json`。
 
 ### 4.1 I2C (INA226)
 | 信号 | GPIO | 备注 |

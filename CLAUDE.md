@@ -21,6 +21,7 @@ PlatformIO 未加入 PATH,使用完整路径:
 - **Sensor**: INA226, I2C, 2mOhm shunt, 15A max
 - **DAC**: DAC8562, dual 16-bit, dedicated bus on the second general-purpose SPI host (GPIO 40/41/14; `HSPI` on ESP32-S3 Arduino)
 - **LCD SPI**: ST7789 on SPI2 (GP-SPI2/FSPI, GPIO 11/12/10)
+- **Pin Visualization**: `Docs/PINOUT_VISUALIZATION.md` defines the CubeMX-style abstract pin map, with `Docs/pinout_metadata.json` as its visualization metadata layer.
 
 ## Architecture
 

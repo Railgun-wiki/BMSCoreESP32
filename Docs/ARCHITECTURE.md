@@ -154,6 +154,7 @@ sequenceDiagram
 
 ✅ **已实现**
 
+配套的 CubeMX 风格引脚可视化规范见 `Docs/PINOUT_VISUALIZATION.md`, 元数据见 `Docs/pinout_metadata.json`。
 
 LCD 和 DAC 各自独占一条 SPI 总线,无总线冲突:
 
