@@ -17,10 +17,16 @@
 #include "mqtt_bridge.h"
 #include "tasks.h"
 
+#if defined(CONFIG_IDF_TARGET_ESP32S2) || defined(CONFIG_IDF_TARGET_ESP32S3) || defined(CONFIG_IDF_TARGET_ESP32C3)
+static constexpr uint8_t kDacSpiHost = HSPI;
+#else
+static constexpr uint8_t kDacSpiHost = VSPI;
+#endif
+
 // --- Peripheral instances ---
 static TwoWire   wireI2C(0);
 static SPIClass  spiFSPI(FSPI);  // GP-SPI2: LCD 专用
-static SPIClass  spiDAC(VSPI);   // GP-SPI3: DAC 专用
+static SPIClass  spiDAC(kDacSpiHost);  // 第二个通用 SPI host: DAC 专用
 
 // --- BSP driver instances ---
 static Ina226    ina226(&wireI2C, INA226_ADDRESS_7BIT);
@@ -35,7 +41,7 @@ void setup() {
     // --- I2C ---
     wireI2C.begin(PIN_I2C_SDA, PIN_I2C_SCL, 400000);
 
-    // --- SPI: LCD on GP-SPI2 (FSPI), DAC on GP-SPI3 (VSPI) ---
+    // --- SPI: LCD on GP-SPI2 (FSPI), DAC on the second general-purpose SPI host ---
     spiFSPI.begin(PIN_LCD_SCLK, -1, PIN_LCD_MOSI, PIN_LCD_CS);
     spiDAC.begin(PIN_DAC_SCLK, -1, PIN_DAC_MOSI, PIN_DAC_SYNC);
 

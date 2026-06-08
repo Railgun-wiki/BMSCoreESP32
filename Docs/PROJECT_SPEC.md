@@ -175,7 +175,7 @@ graph TB
 | PSRAM | 8MB OPI |
 | Display | 1.14" ST7789 IPS, 135x240, RGB565, SPI |
 | Sensor | INA226, I2C, 2mOhm 分流器, 最大 15A |
-| DAC | DAC8562, 双通道 16-bit, SPI3 (独立总线) |
+| DAC | DAC8562, 双通道 16-bit，第二个通用 SPI host 独立总线 |
 | WiFi | ESP32-S3 内置 2.4GHz 802.11 b/g/n |
 | RGB LED | WS2812, GPIO 48 |
 
@@ -187,6 +187,7 @@ PlatformIO 仓库仅有 N8R8 板定义。N16R8 需要自定义:
 ---
 
 ## 4. 引脚分配
+
 
 ### 4.1 I2C (INA226)
 | 信号 | GPIO | 备注 |
@@ -204,7 +205,7 @@ PlatformIO 仓库仅有 N8R8 板定义。N16R8 需要自定义:
 | LCD_RST | 9 | ST7789 复位 |
 | LCD_BLK | 8 | ST7789 背光 |
 
-### 4.2.1 SPI — DAC8562 (GP-SPI3 / VSPI, DAC 专用)
+### 4.2.1 SPI — DAC8562（第二个通用 SPI host，DAC 专用）
 | 信号 | GPIO | 备注 |
 |------|------|------|
 | DAC_MOSI | 40 | DAC 数据 |
@@ -440,7 +441,7 @@ git commit -m "feat: update ui submodule for chart widget"
 - [x] bms_hw.cpp 适配 (Wire/SPI handle, 双 mutex)
 - [x] 4 页面 UI 渲染
 - [x] Bridge 模式 (bms_data_bridge_t)
-- [x] SPI 总线分离 (FSPI→LCD, VSPI→DAC)
+- [x] SPI 总线分离 (FSPI→LCD, 第二个通用 SPI host→DAC)
 
 ### Phase 3: 传感器集成 ✅
 - [x] INA226 数据读取

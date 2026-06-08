@@ -26,7 +26,7 @@ graph TB
 
     subgraph BSP["src/bsp/ — 硬件驱动 (本项目维护)"]
         INA["Ina226<br/>I2C"]
-        DAC["Dac8562<br/>SPI3"]
+        DAC["Dac8562<br/>Dedicated SPI host"]
         LCD["St7789<br/>SPI2"]
     end
 
@@ -154,6 +154,7 @@ sequenceDiagram
 
 ✅ **已实现**
 
+
 LCD 和 DAC 各自独占一条 SPI 总线,无总线冲突:
 
 ```mermaid
@@ -165,7 +166,7 @@ graph LR
         ST7789["St7789 驱动<br/>40MHz"]
     end
 
-    subgraph VSPI["GP-SPI3 (VSPI) — DAC 专用"]
+    subgraph DACSPI["第二个通用 SPI host（ESP32-S3 Arduino 中为 HSPI）— DAC 专用"]
         DAC_MOSI["MOSI: GPIO 40"]
         DAC_SCLK["SCLK: GPIO 41"]
         DAC_CS["CS: GPIO 14"]
@@ -179,7 +180,7 @@ graph LR
 | 总线 | Arduino 别名 | 设备 | 频率 | CS 引脚 |
 |------|-------------|------|------|---------|
 | GP-SPI2 | `FSPI` | ST7789 LCD | 40MHz | GPIO 10 |
-| GP-SPI3 | `VSPI` | DAC8562 | 20MHz | GPIO 14 |
+| 第二个通用 SPI host | `HSPI` on ESP32-S3 Arduino | DAC8562 | 20MHz | GPIO 14 |
 
 每个驱动自行管理 `beginTransaction`/`endTransaction`,无共享状态。
 
@@ -440,7 +441,7 @@ ISR 只做两件事:
 | PlatformIO 构建 | ✅ | N16R8 板定义, Arduino 框架 |
 | BSP: INA226 | ✅ | I2C 驱动, 完整寄存器访问, alert API 已实现未启用 |
 | BSP: ST7789 | ✅ | SPI2 (FSPI) 专用, LVGL flush_cb |
-| BSP: DAC8562 | ✅ | SPI3 (VSPI) 专用, 双通道 16-bit |
+| BSP: DAC8562 | ✅ | 第二个通用 SPI host 专用, 双通道 16-bit |
 | bms_hw 桥接层 | ✅ | 双 mutex, 指针注入, bms_state_t |
 | LVGL UI (4 页面) | ✅ | MVC 架构, bridge 模式, PC 模拟器兼容 |
 | OCV-SOC 查表 | ✅ | LG 18650HG2, 13 点线性插值 |

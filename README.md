@@ -20,7 +20,7 @@ ESP32-S3 BMS (Battery Management System) integrated firmware — combining INA22
 | Flash / PSRAM | 16MB / 8MB OPI |
 | Display | 1.14" ST7789 IPS, 135x240, RGB565, SPI |
 | Sensor | INA226, I2C, 2mOhm shunt, 15A max |
-| DAC | DAC8562, dual 16-bit, SPI3 (GP-SPI3/VSPI, dedicated bus) |
+| DAC | DAC8562, dual 16-bit, dedicated SPI bus on the second general-purpose SPI host |
 | WiFi | ESP32-S3 built-in 2.4GHz 802.11 b/g/n |
 
 ## Architecture
@@ -61,6 +61,7 @@ Three-layer decoupling: BSP drivers are injected into App via pointers, App and 
 
 ## Pin Assignment
 
+
 ### I2C (INA226)
 | Signal | GPIO |
 |--------|------|
@@ -77,12 +78,14 @@ Three-layer decoupling: BSP drivers are injected into App via pointers, App and 
 | LCD_RST | 9 |
 | LCD_BLK | 8 |
 
-### SPI — DAC8562 (GP-SPI3 / VSPI)
+### SPI — DAC8562 (dedicated second general-purpose SPI host)
 | Signal | GPIO |
 |--------|------|
 | DAC_MOSI | 40 |
 | DAC_SCLK | 41 |
 | DAC_SYNC | 14 |
+
+On ESP32-S3 Arduino, this DAC bus uses the second general-purpose SPI host exposed as `HSPI`. The wiring stays dedicated to the DAC and remains separate from the LCD bus.
 
 ### Other
 | Signal | GPIO | Note |

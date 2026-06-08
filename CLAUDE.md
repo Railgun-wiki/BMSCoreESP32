@@ -19,7 +19,7 @@ PlatformIO 未加入 PATH,使用完整路径:
 - **Board def**: `boards/freenove_esp32_s3_wroom_n16r8.json` (自定义,PlatformIO 仅有 N8R8)
 - **Display**: 1.14" ST7789 IPS, 135x240, RGB565, SPI
 - **Sensor**: INA226, I2C, 2mOhm shunt, 15A max
-- **DAC**: DAC8562, dual 16-bit, SPI3 (GP-SPI3/VSPI, dedicated bus, GPIO 40/41/14)
+- **DAC**: DAC8562, dual 16-bit, dedicated bus on the second general-purpose SPI host (GPIO 40/41/14; `HSPI` on ESP32-S3 Arduino)
 - **LCD SPI**: ST7789 on SPI2 (GP-SPI2/FSPI, GPIO 11/12/10)
 
 ## Architecture

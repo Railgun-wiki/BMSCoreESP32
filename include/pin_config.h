@@ -13,8 +13,8 @@
 #define PIN_LCD_RST         9
 #define PIN_LCD_BLK         8
 #define PIN_DAC_SYNC        14   /* DAC8562 chip select */
-#define PIN_DAC_MOSI        40   /* DAC8562 data  (GP-SPI3) */
-#define PIN_DAC_SCLK        41   /* DAC8562 clock (GP-SPI3) */
+#define PIN_DAC_MOSI        40   /* DAC8562 data on dedicated SPI bus */
+#define PIN_DAC_SCLK        41   /* DAC8562 clock on dedicated SPI bus */
 
 /* UART (reserved) */
 #define PIN_UART_RX         18
