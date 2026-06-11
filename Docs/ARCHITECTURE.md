@@ -164,7 +164,7 @@ graph LR
         LCD_MOSI["MOSI: GPIO 11"]
         LCD_SCLK["SCLK: GPIO 12"]
         LCD_CS["CS: GPIO 10"]
-        ST7789["St7789 驱动<br/>40MHz"]
+        ST7789["St7789 驱动<br/>80MHz DMA (Half-Duplex)"]
     end
 
     subgraph DACSPI["第二个通用 SPI host（ESP32-S3 Arduino 中为 HSPI）— DAC 专用"]
@@ -174,13 +174,13 @@ graph LR
         DAC8562["Dac8562 驱动<br/>20MHz"]
     end
 
-    ST7789 -->|"flush_cb()"| ESP32["ESP32-S3"]
+    ST7789 -->|"spi_device_queue_trans()"| ESP32["ESP32-S3"]
     DAC8562 -->|"writeValue()"| ESP32
 ```
 
 | 总线 | Arduino 别名 | 设备 | 频率 | CS 引脚 |
 |------|-------------|------|------|---------|
-| GP-SPI2 | `FSPI` | ST7789 LCD | 40MHz | GPIO 10 |
+| GP-SPI2 | `FSPI` | ST7789 LCD | 80MHz | GPIO 10 |
 | 第二个通用 SPI host | `HSPI` on ESP32-S3 Arduino | DAC8562 | 20MHz | GPIO 14 |
 
 每个驱动自行管理 `beginTransaction`/`endTransaction`,无共享状态。
