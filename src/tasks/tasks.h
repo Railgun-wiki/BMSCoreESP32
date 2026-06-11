@@ -8,6 +8,7 @@ void taskLvgl(void* param);
 void taskSensor(void* param);
 void taskSensorInit(void);
 void taskMqtt(void* param);
+void taskSystem(void* param);
 
 #ifdef __cplusplus
 }

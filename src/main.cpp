@@ -76,7 +76,6 @@ void setup() {
     // --- Sensor task init ---
     taskSensorInit();
 
-    // TODO: Initialize OneButton on PIN_FLASH_BTN for SmartConfig start (long press >3s)
     // TODO: Initialize WS2812 LED on PIN_RGB_LED for status indication
     // TODO: Configure ESP task watchdog (esp_task_wdt_config)
     // TODO: Initialize PSRAM and log available size (ESP.getPsramSize())
@@ -97,6 +96,7 @@ void setup() {
     xTaskCreatePinnedToCore(taskLvgl,   "lvgl",   8192, nullptr, 5, nullptr, 1);
     xTaskCreatePinnedToCore(taskSensor, "sensor", 4096, nullptr, 4, nullptr, 0);
     xTaskCreatePinnedToCore(taskMqtt,   "mqtt",   6144, nullptr, 2, nullptr, 0);
+    xTaskCreatePinnedToCore(taskSystem, "system", 4096, nullptr, 1, nullptr, 0);
 
     Serial.println("[BMS] Tasks created, system running");
 }
