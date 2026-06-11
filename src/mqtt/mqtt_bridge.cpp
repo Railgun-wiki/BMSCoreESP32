@@ -2,7 +2,6 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <PubSubClient.h>
-#include <WiFiManager.h>
 #include <ArduinoJson.h>
 #include <LittleFS.h>
 #include "bms_hw.h"
@@ -23,14 +22,43 @@ void mqttBridgeInit(void) {
     LittleFS.begin(true);
     // TODO: Check LittleFS.begin() return value
 
-    WiFiManager wm;
-    wm.setConnectTimeout(30);
-    wm.setConfigPortalTimeout(120);
+    WiFi.mode(WIFI_STA);
+    WiFi.begin();
+    Serial.print("[MQTT] Connecting to saved WiFi");
 
-    bool connected = wm.autoConnect("ESP32S3_BMS");
-    if (!connected) {
-        Serial.println("[MQTT] WiFi config timeout, running offline");
-        return;
+    int retries = 0;
+    while (WiFi.status() != WL_CONNECTED && retries < 20) {
+        delay(500);
+        Serial.print(".");
+        retries++;
+    }
+    Serial.println();
+
+    if (WiFi.status() != WL_CONNECTED) {
+        Serial.println("[MQTT] WiFi connection failed, starting SmartConfig...");
+        WiFi.beginSmartConfig();
+
+        Serial.print("[MQTT] Waiting for SmartConfig");
+        int sc_retries = 0;
+        while (!WiFi.smartConfigDone() && sc_retries < 240) { // 120s timeout
+            delay(500);
+            Serial.print(".");
+            sc_retries++;
+        }
+        Serial.println();
+
+        if (WiFi.smartConfigDone()) {
+            Serial.println("[MQTT] SmartConfig received. Waiting for WiFi...");
+            while (WiFi.status() != WL_CONNECTED) {
+                delay(500);
+                Serial.print(".");
+            }
+            Serial.println();
+        } else {
+            Serial.println("[MQTT] SmartConfig timeout, running offline");
+            WiFi.stopSmartConfig();
+            return;
+        }
     }
 
     Serial.printf("[MQTT] WiFi connected: %s\n", WiFi.localIP().toString().c_str());
