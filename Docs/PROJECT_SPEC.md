@@ -336,7 +336,7 @@ build_flags =
 | lv_bms_view | master | src/ui/ submodule (Railgun-wiki/lv_bms_view, 新建 dev-esp32) |
 | FreeRTOS-Kernel | latest | middleware/FreeRTOS/ submodule |
 | ArduinoJson | ^7 | lib_deps |
-| OneButton | ^2 | lib_deps |
+| OneButton | ^2.6.2 | lib_deps |
 | PubSubClient | ^2 | lib_deps |
 | SmartConfig | 原生 | - |
 

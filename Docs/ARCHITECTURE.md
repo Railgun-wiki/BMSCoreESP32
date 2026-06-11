@@ -454,5 +454,5 @@ ISR 只做两件事:
 | **NTC 温度读取** | 🔲 | ADC 未实现 |
 | **UART 主机通信** | 🔲 | 预留引脚,协议未实现 |
 | **DL SOC 推理** | 🔲 | 1D-CNN 模型已训练,推理引擎未集成 |
-| **WS2812 LED 状态指示** | 🔲 | GPIO 48 已分配,未初始化 |
-| **OneButton 配置重置** | 🔲 | GPIO 0 已分配,未初始化 |
+| **WS2812 LED 状态指示** | ✅ | taskSystem 中轮询, 蓝绿双色闪烁 |
+| **OneButton 配置重置** | ✅ | taskSystem 长按 3s 触发 SmartConfig |

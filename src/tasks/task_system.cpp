@@ -11,7 +11,7 @@ static void handleLongPressStart() {
 
 void taskSystem(void* param) {
     OneButton btnFlash(PIN_FLASH_BTN, true, true);
-    btnFlash.setPressTicks(3000); // 3 seconds long press
+    btnFlash.setPressMs(3000); // 3 seconds long press
     btnFlash.attachLongPressStart(handleLongPressStart);
 
     Serial.println("[SYSTEM] taskSystem running");
@@ -27,9 +27,9 @@ void taskSystem(void* param) {
         if (WiFi.status() != WL_CONNECTED) {
             // Not connected / SmartConfig mode: Blink Blue (500ms ON, 500ms OFF)
             if ((tick_count % 100) < 50) {
-                neopixelWrite(PIN_RGB_LED, 0, 0, 32); // Dim blue
+                rgbLedWrite(PIN_RGB_LED, 0, 0, 32); // Dim blue
             } else {
-                neopixelWrite(PIN_RGB_LED, 0, 0, 0);
+                rgbLedWrite(PIN_RGB_LED, 0, 0, 0);
             }
         } else {
             // Connected: Breathing Green (2s cycle)
@@ -42,7 +42,7 @@ void taskSystem(void* param) {
                 // Fade out: 32 to 0
                 brightness = ((200 - cycle) * 32) / 100;
             }
-            neopixelWrite(PIN_RGB_LED, 0, brightness, 0); // Green breathing
+            rgbLedWrite(PIN_RGB_LED, 0, brightness, 0); // Green breathing
         }
 
         vTaskDelay(pdMS_TO_TICKS(10));
