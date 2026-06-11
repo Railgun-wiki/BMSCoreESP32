@@ -16,9 +16,35 @@ void taskSystem(void* param) {
 
     Serial.println("[SYSTEM] taskSystem running");
 
+    uint32_t tick_count = 0;
+
     while (1) {
         btnFlash.tick();
-        // TODO: Handle WS2812 LED blinking here in the future
+        
+        // Handle WS2812 LED status (1 tick = 10ms)
+        tick_count++;
+        
+        if (WiFi.status() != WL_CONNECTED) {
+            // Not connected / SmartConfig mode: Blink Blue (500ms ON, 500ms OFF)
+            if ((tick_count % 100) < 50) {
+                neopixelWrite(PIN_RGB_LED, 0, 0, 32); // Dim blue
+            } else {
+                neopixelWrite(PIN_RGB_LED, 0, 0, 0);
+            }
+        } else {
+            // Connected: Breathing Green (2s cycle)
+            uint32_t cycle = tick_count % 200;
+            uint8_t brightness = 0;
+            if (cycle < 100) {
+                // Fade in: 0 to 32
+                brightness = (cycle * 32) / 100;
+            } else {
+                // Fade out: 32 to 0
+                brightness = ((200 - cycle) * 32) / 100;
+            }
+            neopixelWrite(PIN_RGB_LED, 0, brightness, 0); // Green breathing
+        }
+
         vTaskDelay(pdMS_TO_TICKS(10));
     }
 }

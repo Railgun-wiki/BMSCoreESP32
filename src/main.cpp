@@ -76,7 +76,6 @@ void setup() {
     // --- Sensor task init ---
     taskSensorInit();
 
-    // TODO: Initialize WS2812 LED on PIN_RGB_LED for status indication
     // TODO: Configure ESP task watchdog (esp_task_wdt_config)
     // TODO: Initialize PSRAM and log available size (ESP.getPsramSize())
 
