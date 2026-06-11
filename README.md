@@ -8,7 +8,7 @@ ESP32-S3 BMS (Battery Management System) integrated firmware — combining INA22
 
 - **BMS Core**: INA226 current/voltage monitoring (2mOhm shunt, 15A max) + DAC8562 dual 16-bit analog output
 - **LVGL UI**: 4-page MVC interface (SOC display, CCCV charging, CC discharging, system settings) on 1.14" ST7789 IPS display
-- **MQTT Telemetry**: WiFi auto-config via WiFiManager captive portal + JSON telemetry reporting (voltage/current/SOC/temperature)
+- **MQTT Telemetry**: WiFi auto-config via SmartConfig (ESP-Touch) + JSON telemetry reporting (voltage/current/SOC/temperature)
 - **SOC Estimation**: OCV-SOC lookup table for LG 18650HG2 (13-point linear interpolation, integer math)
 - **FreeRTOS Multi-task**: Dual-core scheduling — LVGL on Core 1, sensor + MQTT on Core 0
 
@@ -96,7 +96,7 @@ On ESP32-S3 Arduino, this DAC bus uses the second general-purpose SPI host expos
 | UART_RX | 18 | Reserved |
 | UART_TX | 17 | Reserved |
 | RGB_LED | 48 | WS2812 status |
-| FLASH_BTN | 0 | WiFiManager reset |
+| FLASH_BTN | 0 | SmartConfig trigger |
 
 > GPIO 35-37 are occupied by OPI PSRAM and cannot be used.
 
@@ -153,7 +153,7 @@ PlatformIO is not in PATH — use full path:
 | ArduinoJson | ^7 | PlatformIO lib_deps |
 | OneButton | ^2 | PlatformIO lib_deps |
 | PubSubClient | ^2 | PlatformIO lib_deps |
-| WiFiManager | v2.0.17 | PlatformIO lib_deps |
+| SmartConfig | Native | Built-in ESP-Touch config |
 
 ## MQTT Protocol
 
@@ -176,7 +176,7 @@ Telemetry payload:
 
 ## WiFi Configuration
 
-- WiFiManager captive portal — AP mode for initial setup
+- SmartConfig — Native ESP-Touch protocol for initial setup
 - AP SSID: `ESP32S3_BMS`
 - Long-press FLASH button (>3s) to erase saved WiFi config
 - Config stored in LittleFS `/config`
@@ -186,7 +186,7 @@ Telemetry payload:
 - [x] Phase 1: PlatformIO project, submodules, BSP drivers, LVGL display init
 - [x] Phase 2: BMS UI + business logic migration
 - [x] Phase 3: INA226 sensor integration, SOC estimation
-- [x] Phase 4: WiFiManager + MQTT telemetry
+- [x] Phase 4: SmartConfig + MQTT telemetry
 - [ ] Phase 5: DL-based SOC inference (1D-CNN, future)
 
 ## License

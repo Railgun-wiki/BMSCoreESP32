@@ -220,7 +220,7 @@ PlatformIO 仓库仅有 N8R8 板定义。N16R8 需要自定义:
 | UART_RX | 18 | 预留 |
 | UART_TX | 17 | 预留 |
 | RGB_LED | 48 | WS2812 状态指示 |
-| FLASH_BTN | 0 | WiFiManager 配置重置 |
+| FLASH_BTN | 0 | SmartConfig 触发配网 |
 
 ### 4.4 约束
 - GPIO 35-37 被 OPI PSRAM 占用,不可用
@@ -291,7 +291,7 @@ PlatformIO 仓库仅有 N8R8 板定义。N16R8 需要自定义:
 ```
 
 ### 7.3 WiFi 配置
-- WiFiManager captive portal (AP 模式配置)
+- SmartConfig (EspTouch 原生协议配网)
 - AP 名称: `ESP32S3_BMS`
 - 长按 FLASH 按钮 (>3s) 擦除 WiFi 配置
 - 配置存储: LittleFS `/config`
@@ -338,7 +338,7 @@ build_flags =
 | ArduinoJson | ^7 | lib_deps |
 | OneButton | ^2 | lib_deps |
 | PubSubClient | ^2 | lib_deps |
-| WiFiManager | v2.0.17 | lib_deps |
+| SmartConfig | 原生 | - |
 
 ### 9.3 条件编译宏
 | 宏 | 含义 |
@@ -451,7 +451,7 @@ git commit -m "feat: update ui submodule for chart widget"
 - [x] bms_state_t 更新
 
 ### Phase 4: MQTT 遥测 ✅
-- [x] WiFiManager 配置
+- [x] SmartConfig 配置
 - [x] MQTT 连接 + 遥测上报 (5s JSON)
 
 ### Phase 5: DL SOC 推理 (未来)

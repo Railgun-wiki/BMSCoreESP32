@@ -28,7 +28,7 @@
 - board = freenove_esp32_s3_wroom_n16r8 (使用 boards/ 下的自定义板定义)
 - framework = arduino
 - board_build.filesystem = littlefs
-- lib_deps: lvgl, ArduinoJson@^7, OneButton@^2, PubSubClient@^2, WiFiManager#v2.0.17
+- lib_deps: lvgl, ArduinoJson@^7, OneButton@^2, PubSubClient@^2
 - build_flags: -DBOARD_HAS_PSRAM, -DLV_CONF_INCLUDE_SIMPLE, -DBMS_ESP32, -std=gnu++17
 - build_src_filter: 包含 src/tasks/, src/bsp/, src/app/, src/ui/src/, src/mqtt/, src/soc/, fonts/
 
@@ -64,7 +64,7 @@
 ### Step 9: main.cpp
 - 创建 I2C/SPI 外设实例
 - 初始化 BSP 驱动 + bms_hw_bind() + bms_ui_init()
-- WiFiManager 初始化 (阻塞式)
+- SmartConfig 初始化 (非阻塞式状态机等待)
 - 创建 FreeRTOS 任务: task_lvgl (Core1), task_sensor (Core0), task_mqtt (Core0)
 - loop() 空 (vTaskDelay)
 

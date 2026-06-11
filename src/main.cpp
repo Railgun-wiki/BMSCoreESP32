@@ -76,7 +76,7 @@ void setup() {
     // --- Sensor task init ---
     taskSensorInit();
 
-    // TODO: Initialize OneButton on PIN_FLASH_BTN for WiFiManager config reset (long press >3s)
+    // TODO: Initialize OneButton on PIN_FLASH_BTN for SmartConfig start (long press >3s)
     // TODO: Initialize WS2812 LED on PIN_RGB_LED for status indication
     // TODO: Configure ESP task watchdog (esp_task_wdt_config)
     // TODO: Initialize PSRAM and log available size (ESP.getPsramSize())

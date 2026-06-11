@@ -447,7 +447,7 @@ ISR 只做两件事:
 | LVGL UI (4 页面) | ✅ | MVC 架构, bridge 模式, PC 模拟器兼容 |
 | OCV-SOC 查表 | ✅ | LG 18650HG2, 13 点线性插值 |
 | FreeRTOS 3 任务 | ✅ | 双核分配, 互斥锁保护 |
-| MQTT 遥测 | ✅ | WiFiManager + 5s JSON 上报 |
+| MQTT 遥测 | ✅ | SmartConfig + 5s JSON 上报 |
 | **App 层 (CCCV/CC 控制)** | 🔲 | 状态机、DAC 控制、GPIO 控制 |
 | **安全层 (OVP/OCP/UVP)** | 🔲 | 阈值保护 + INA226 ALERT 中断 |
 | **INA226 ALERT 中断** | 🔲 | configureAlert() 已实现,未接线 |
