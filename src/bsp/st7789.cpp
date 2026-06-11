@@ -1,16 +1,51 @@
 #include "st7789.hpp"
 #include <Arduino.h>
+#include <cstring>
 
-St7789::St7789(SPIClass* spi, int csPin, int dcPin, int rstPin, int blkPin)
-    : m_spi(spi), m_csPin(csPin), m_dcPin(dcPin), m_rstPin(rstPin), m_blkPin(blkPin),
-      m_width(135), m_height(240), m_xOffset(52), m_yOffset(40) {
+static int s_dcPin = -1;
+
+static void IRAM_ATTR lcd_spi_pre_transfer_callback(spi_transaction_t *t) {
+    int dc = (int)t->user;
+    if (s_dcPin >= 0) {
+        digitalWrite(s_dcPin, dc);
+    }
+}
+
+St7789::St7789(int mosiPin, int sclkPin, int csPin, int dcPin, int rstPin, int blkPin)
+    : m_mosiPin(mosiPin), m_sclkPin(sclkPin), m_csPin(csPin), m_dcPin(dcPin), m_rstPin(rstPin), m_blkPin(blkPin),
+      m_width(135), m_height(240), m_xOffset(52), m_yOffset(40), m_dma_in_flight(false) {
+    s_dcPin = m_dcPin;
 }
 
 void St7789::init() {
-    pinMode(m_csPin, OUTPUT);
     pinMode(m_dcPin, OUTPUT);
     pinMode(m_rstPin, OUTPUT);
     pinMode(m_blkPin, OUTPUT);
+
+    // 1. Initialize SPI bus (SPI2_HOST = FSPI)
+    spi_bus_config_t buscfg = {};
+    buscfg.mosi_io_num = m_mosiPin;
+    buscfg.miso_io_num = -1; // Transmit Only
+    buscfg.sclk_io_num = m_sclkPin;
+    buscfg.quadwp_io_num = -1;
+    buscfg.quadhd_io_num = -1;
+    buscfg.max_transfer_sz = (240 * 135 * 2) + 8;
+
+    ESP_ERROR_CHECK(spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_CH_AUTO));
+
+    // 2. Add device to SPI bus
+    spi_device_interface_config_t devcfg = {};
+    devcfg.command_bits = 0;
+    devcfg.address_bits = 0;
+    devcfg.dummy_bits = 0;
+    devcfg.mode = 0;
+    devcfg.clock_speed_hz = SPI_MASTER_FREQ_80M; // 80 MHz
+    devcfg.spics_io_num = m_csPin;
+    devcfg.flags = SPI_DEVICE_HALFDUPLEX; // Transmit Only Master
+    devcfg.queue_size = 7;
+    devcfg.pre_cb = lcd_spi_pre_transfer_callback;
+
+    ESP_ERROR_CHECK(spi_bus_add_device(SPI2_HOST, &devcfg, &m_spi_handle));
 
     // Hardware Reset
     digitalWrite(m_rstPin, HIGH);
@@ -19,8 +54,6 @@ void St7789::init() {
     delay(20);
     digitalWrite(m_rstPin, HIGH);
     delay(120);
-
-    digitalWrite(m_csPin, LOW);
 
     writeCmd(0x11); // Sleep Out
     delay(120);
@@ -113,16 +146,14 @@ void St7789::setRotation(Rotation rotation) {
 
 void St7789::setAddressWindow(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2) {
     writeCmd(0x2A); // Column Address Set
-    writeData((x1 + m_xOffset) >> 8);
-    writeData((x1 + m_xOffset) & 0xFF);
-    writeData((x2 + m_xOffset) >> 8);
-    writeData((x2 + m_xOffset) & 0xFF);
+    uint8_t data_x[] = {(uint8_t)((x1 + m_xOffset) >> 8), (uint8_t)((x1 + m_xOffset) & 0xFF), 
+                        (uint8_t)((x2 + m_xOffset) >> 8), (uint8_t)((x2 + m_xOffset) & 0xFF)};
+    writeData(data_x, 4);
 
     writeCmd(0x2B); // Row Address Set
-    writeData((y1 + m_yOffset) >> 8);
-    writeData((y1 + m_yOffset) & 0xFF);
-    writeData((y2 + m_yOffset) >> 8);
-    writeData((y2 + m_yOffset) & 0xFF);
+    uint8_t data_y[] = {(uint8_t)((y1 + m_yOffset) >> 8), (uint8_t)((y1 + m_yOffset) & 0xFF), 
+                        (uint8_t)((y2 + m_yOffset) >> 8), (uint8_t)((y2 + m_yOffset) & 0xFF)};
+    writeData(data_y, 4);
 
     writeCmd(0x2C); // Memory Write
 }
@@ -132,24 +163,28 @@ void St7789::fillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t c
     if ((x + w) > m_width) w = m_width - x;
     if ((y + h) > m_height) h = m_height - y;
 
+    // wait previous DMA
+    if (m_dma_in_flight) {
+        spi_transaction_t* rtrans;
+        spi_device_get_trans_result(m_spi_handle, &rtrans, portMAX_DELAY);
+        m_dma_in_flight = false;
+    }
+
     setAddressWindow(x, y, x + w - 1, y + h - 1);
 
     uint8_t colorBytes[2] = {static_cast<uint8_t>(color >> 8), static_cast<uint8_t>(color & 0xFF)};
-
-    m_spi->beginTransaction(SPISettings(40000000, MSBFIRST, SPI_MODE0));
-    digitalWrite(m_dcPin, HIGH);
-    uint32_t totalPixels = (uint32_t)w * h;
     uint8_t buf[128];
     for (int i = 0; i < 128; i += 2) {
         buf[i] = colorBytes[0];
         buf[i + 1] = colorBytes[1];
     }
+
+    uint32_t totalPixels = (uint32_t)w * h;
     while (totalPixels > 0) {
         uint32_t chunk = (totalPixels > 64) ? 64 : totalPixels;
-        m_spi->transfer(buf, chunk * 2);
+        writeData(buf, chunk * 2);
         totalPixels -= chunk;
     }
-    m_spi->endTransaction();
 }
 
 void St7789::drawImage(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t* data) {
@@ -157,43 +192,61 @@ void St7789::drawImage(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uin
     if ((x + w) > m_width) w = m_width - x;
     if ((y + h) > m_height) h = m_height - y;
 
-    setAddressWindow(x, y, x + w - 1, y + h - 1);
+    // wait previous DMA
+    if (m_dma_in_flight) {
+        spi_transaction_t* rtrans;
+        spi_device_get_trans_result(m_spi_handle, &rtrans, portMAX_DELAY);
+        m_dma_in_flight = false;
+    }
 
-    m_spi->beginTransaction(SPISettings(40000000, MSBFIRST, SPI_MODE0));
-    digitalWrite(m_dcPin, HIGH);
-    m_spi->transfer((uint8_t*)data, w * h * 2);
-    m_spi->endTransaction();
+    setAddressWindow(x, y, x + w - 1, y + h - 1);
+    writeData((const uint8_t*)data, w * h * 2);
 }
 
 void St7789::flush_cb(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const uint16_t* color_p) {
-    uint16_t w = x2 - x1 + 1;
-    uint16_t h = y2 - y1 + 1;
+    // Wait for any previous DMA transaction to finish
+    if (m_dma_in_flight) {
+        spi_transaction_t* rtrans;
+        spi_device_get_trans_result(m_spi_handle, &rtrans, portMAX_DELAY);
+        m_dma_in_flight = false;
+    }
 
     setAddressWindow(x1, y1, x2, y2);
 
-    m_spi->beginTransaction(SPISettings(40000000, MSBFIRST, SPI_MODE0));
-    digitalWrite(m_dcPin, HIGH);
-    m_spi->transfer((uint8_t*)color_p, w * h * 2);
-    m_spi->endTransaction();
+    size_t len = (x2 - x1 + 1) * (y2 - y1 + 1) * 2;
+    memset(&m_trans, 0, sizeof(spi_transaction_t));
+    m_trans.length = len * 8; // length in bits
+    m_trans.tx_buffer = color_p;
+    m_trans.user = (void*)1; // DC = 1
+
+    ESP_ERROR_CHECK(spi_device_queue_trans(m_spi_handle, &m_trans, portMAX_DELAY));
+    m_dma_in_flight = true;
 }
 
 void St7789::writeCmd(uint8_t cmd) {
-    m_spi->beginTransaction(SPISettings(40000000, MSBFIRST, SPI_MODE0));
-    digitalWrite(m_dcPin, LOW);
-    m_spi->transfer(cmd);
-    m_spi->endTransaction();
+    spi_transaction_t t;
+    memset(&t, 0, sizeof(t));
+    t.length = 8;
+    t.tx_buffer = &cmd;
+    t.user = (void*)0; // DC = 0
+    spi_device_polling_transmit(m_spi_handle, &t);
 }
 
 void St7789::writeData(uint8_t data) {
-    m_spi->beginTransaction(SPISettings(40000000, MSBFIRST, SPI_MODE0));
-    digitalWrite(m_dcPin, HIGH);
-    m_spi->transfer(data);
-    m_spi->endTransaction();
+    spi_transaction_t t;
+    memset(&t, 0, sizeof(t));
+    t.length = 8;
+    t.tx_buffer = &data;
+    t.user = (void*)1; // DC = 1
+    spi_device_polling_transmit(m_spi_handle, &t);
 }
 
 void St7789::writeData(const uint8_t* data, uint32_t len) {
-    m_spi->beginTransaction(SPISettings(40000000, MSBFIRST, SPI_MODE0));
-    digitalWrite(m_dcPin, HIGH);
-    m_spi->transfer((uint8_t*)data, len);
-    m_spi->endTransaction();
+    if (len == 0) return;
+    spi_transaction_t t;
+    memset(&t, 0, sizeof(t));
+    t.length = len * 8;
+    t.tx_buffer = data;
+    t.user = (void*)1; // DC = 1
+    spi_device_polling_transmit(m_spi_handle, &t);
 }

@@ -25,13 +25,12 @@ static constexpr uint8_t kDacSpiHost = VSPI;
 
 // --- Peripheral instances ---
 static TwoWire   wireI2C(0);
-static SPIClass  spiFSPI(FSPI);  // GP-SPI2: LCD 专用
 static SPIClass  spiDAC(kDacSpiHost);  // 第二个通用 SPI host: DAC 专用
 
 // --- BSP driver instances ---
 static Ina226    ina226(&wireI2C, INA226_ADDRESS_7BIT);
 static Dac8562   dac8562(&spiDAC, PIN_DAC_SYNC);
-static St7789    lcd(&spiFSPI, PIN_LCD_CS, PIN_LCD_DC, PIN_LCD_RST, PIN_LCD_BLK);
+static St7789    lcd(PIN_LCD_MOSI, PIN_LCD_SCLK, PIN_LCD_CS, PIN_LCD_DC, PIN_LCD_RST, PIN_LCD_BLK);
 
 void setup() {
     Serial.begin(115200);
@@ -41,8 +40,8 @@ void setup() {
     // --- I2C ---
     wireI2C.begin(PIN_I2C_SDA, PIN_I2C_SCL, 400000);
 
-    // --- SPI: LCD on GP-SPI2 (FSPI), DAC on the second general-purpose SPI host ---
-    spiFSPI.begin(PIN_LCD_SCLK, -1, PIN_LCD_MOSI, PIN_LCD_CS);
+    // --- SPI: DAC on the second general-purpose SPI host ---
+    // LCD uses ESP-IDF native SPI driver internally
     spiDAC.begin(PIN_DAC_SCLK, -1, PIN_DAC_MOSI, PIN_DAC_SYNC);
 
     // --- BSP Init ---
